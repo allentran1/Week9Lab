@@ -6,110 +6,69 @@
 package services;
 
 import models.User;
-import models.Role;
 import dataaccess.UserDB;
-import java.util.ArrayList;
 import java.util.List;
-import exceptions.InvalidFields;
+import exceptions.InvalidFieldsException;
 
 /**
  *
  * @author allen
  */
 public class UserService {
-    private final UserDB accessUsers = new UserDB();
-    private final RoleService rs = new RoleService();
     
-    /**
-     * Get all users and match up roles
-     * @return Users as a list
-     * @throws Exception 
-     */
+    private final UserDB accessUsers = new UserDB();
+    
+    
     public List<User> getAll() throws Exception {
         
         List<User> users = accessUsers.getAll();
         
-        // match role id with the role from the role table and update.
-        for (int i = 0; i < users.size(); i++) {
-            
-            int id = users.get(i).getRole().getId();
-            Role role = rs.get(id);
-            
-            users.get(i).setRole(role);
-        }
-        
         return users;
     }
     
-    /**
-     * Get all users and match up roles
-     * @return Users as a list
-     * @throws Exception 
-     */
+    
     public User get(String email) throws Exception {
         
         User user = accessUsers.get(email);
         
-        // match role id with the role from the role table and update.
-        int id = user.getRole().getId();
-        Role role = rs.get(id);
-        user.setRole(role);
-        
         return user;
     }
     
-    /**
-     * Insert new user
-     * @param user
-     * @throws Exception 
-     * @throws InvalidFields if null or empty fields
-     */
-    public void insert(User user) throws Exception, InvalidFields{
+    
+    public void insert(User user) throws Exception, InvalidFieldsException {
        
-        // match role id with the role from the role table and update.
-        int id = user.getRole().getId();
-        Role role = rs.get(id);
-        user.setRole(role);
         
         // check all attributes are valid
         if (user.getEmail() == null || user.getFirstName() == null || user.getLastName() == null || user.getPassword() == null ||
                 user.getEmail().equals("") || user.getFirstName().equals("") || user.getLastName().equals("") || user.getPassword().equals("")) {
-            throw new InvalidFields();
+            throw new InvalidFieldsException();
         } else {
             accessUsers.insert(user);
         }
         
     }
     
-    /**
-     * update existing user
-     * @param user
-     * @throws Exception 
-     * @throws InvalidFields if null or empty fields
-     */
-    public void update(User user) throws Exception, InvalidFields{
+    
+    public void update(User user) throws Exception, InvalidFieldsException {
         
-        // match role id with the role from the role table and update.
-        int id = user.getRole().getId();
-        Role role = rs.get(id);
-        user.setRole(role);
         
-        // check all attributes are valid
         if (user.getEmail() == null || user.getFirstName() == null || user.getLastName() == null || user.getPassword() == null ||
                 user.getEmail().equals("") || user.getFirstName().equals("") || user.getLastName().equals("") || user.getPassword().equals("")) {
-            throw new InvalidFields();
+            throw new InvalidFieldsException();
         } else {
-            accessUsers.update(user);
+            
+            User oldUser = accessUsers.get(user.getEmail());
+            oldUser.setFirstName(user.getFirstName());
+            oldUser.setLastName(user.getLastName());
+            oldUser.setPassword(user.getPassword());
+            oldUser.setRole(user.getRole());
+            accessUsers.update(oldUser);
         }
         
         
     }
     
-    /**
-     * delete a user by email
-     * @param email
-     * @throws Exception 
-     */
+    
     public void delete(String email) throws Exception {
         accessUsers.delete(email);
     }

@@ -10,6 +10,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Manage Users</title>
+        <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet">
     </head>
     <body>
         <h1>Manage Users</h1>
@@ -50,7 +51,7 @@
                 Password: <input type="password" name="password" ><br />
                 Role: <select name="role">
                     <c:forEach items="${roles}" var="role">
-                        <option value="${role.id}">${role.roleName}</option>
+                        <option value="${role.roleId}">${role.roleName}</option>
                     </c:forEach>
                 </select><br />
 
@@ -69,9 +70,9 @@
                 Last Name: <input type="text" name="lname"  value="${editUser.lastName}"><br />
                 Password: <input type="password" name="password" ><br />
                 Role: <select name="role">
-                    <!--<option value="${editUser.role.id}">${editUser.role.roleName}</option>-->
+                    <!--<option value="${editUser.role.roleId}">${editUser.role.roleName}</option>-->
                     <c:forEach items="${roles}" var="role">
-                        <option value="${role.id}" ${role.id eq editUser.role.id ? 'selected' : ''} >${role.roleName}</option>
+                        <option value="${role.roleId}" ${role.roleId eq editUser.role.roleId ? 'selected' : ''} >${role.roleName}</option>
                     </c:forEach>
                 </select><br />
 
@@ -82,5 +83,6 @@
             </form>
             <p>${error}</p>
         </c:if>
+        
     </body>
 </html>

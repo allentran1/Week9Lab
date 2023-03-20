@@ -9,9 +9,9 @@ package exceptions;
  *
  * @author allen
  */
-public class InvalidFields extends Exception {
+public class InvalidFieldsException extends Exception {
     
-    public InvalidFields() {
+    public InvalidFieldsException() {
         
     }
 }

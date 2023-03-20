@@ -5,13 +5,12 @@
  */
 package servlets;
 
-import exceptions.InvalidFields;
+import exceptions.InvalidFieldsException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import services.*;
 import models.*;
 import java.util.List;
@@ -23,9 +22,8 @@ import java.util.logging.Logger;
  * @author allen
  */
 public class UserServlet extends HttpServlet {
-    
-    
-        private boolean first = true;
+
+    private boolean first = true;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -51,7 +49,7 @@ public class UserServlet extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (action != null && action.equals("edit")){ 
+        } else if (action != null && action.equals("edit")){ // edit a user
             
             request.setAttribute("edit", true); // so the edit page shows up.
             try {
@@ -100,10 +98,18 @@ public class UserServlet extends HttpServlet {
             String password = request.getParameter("password").trim();
             int roleId = Integer.parseInt(request.getParameter("role"));
             
+            
             try {
-                us.insert(new User(email, firstName, lastName, password, new Role(roleId, "")));
+                RoleDB accessRoles = new RoleDB();
+                Role role = accessRoles.get(roleId);
+                
+                User insertUser = new User(email, firstName, lastName, password);
+                insertUser.setRole(role);
+                
+                us.insert(insertUser);
                 request.removeAttribute("error");
-            } catch (InvalidFields inv) {
+                
+            } catch (InvalidFieldsException inv) {
                 request.setAttribute("error", "There was an invalid field. User was not added.");
             } catch (Exception ex) {
                 Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -119,12 +125,21 @@ public class UserServlet extends HttpServlet {
             String password = request.getParameter("password").trim();
             int roleId = Integer.parseInt(request.getParameter("role"));
             
-            newUser = new User(email, firstName, lastName, password, new Role(roleId, ""));
+            
+            
+            
+            
             
             try {
+                RoleDB accessRoles = new RoleDB();
+                Role role = accessRoles.get(roleId);
+                
+                newUser = new User(email, firstName, lastName, password);
+                newUser.setRole(role);
+            
                 us.update(newUser);
                 request.removeAttribute("error");
-            } catch (InvalidFields inv) {
+            } catch (InvalidFieldsException inv) {
                 
                 request.setAttribute("error", "There was an invalid field. User was not updated.");
                 request.setAttribute("edit", true);
@@ -157,7 +172,5 @@ public class UserServlet extends HttpServlet {
         
         
     }
-    
-    
-    
+
 }
