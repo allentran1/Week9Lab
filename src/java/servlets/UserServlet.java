@@ -5,6 +5,7 @@
  */
 package servlets;
 
+import dataaccess.RoleDB;
 import exceptions.InvalidFieldsException;
 import java.io.IOException;
 import javax.servlet.ServletException;
